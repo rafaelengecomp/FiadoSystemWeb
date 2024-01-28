@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { UserService } from '../../Shared/services/user.service';
+import { UserService } from '../Shared/services/user.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -7,10 +7,10 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-list',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './list.component.html',
-  styleUrl: './list.component.css'
+  templateUrl: './user.component.html',
+  styleUrl: './user.component.css'
 })
-export class ListComponent {
+export class UserComponent {
 
   users: any[] = [];
   user: any = {};
