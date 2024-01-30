@@ -1,0 +1,99 @@
+<button class="btn-primary" (click)="showList = !showList">{{showList ? 'Novo Cliente' : 'Lista de Clientes'}}</button>
+<p>Clientes {{customers.length}}</p>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <div *ngIf="showList">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Ações</th>
+              <th scope="col">Id </th>
+              <th scope="col">Nome </th>
+              <th scope="col">E-mail</th>
+              <th scope="col">Documento</th>
+              <th scope="col">Data de nascimento</th>
+              <th scope="col">Telefone</th>
+              <th scope="col">Rua</th>
+              <th scope="col">Cidade</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Cep</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let customer of customers">
+              <th scope="row">
+                 <button class="btn-primary" (click)="openDetails(customer)">Editar</button> 
+                 <button class="btn-danger" (click)="delete(customer)">Excluir</button> 
+              </th>
+              <td>{{customer.id}}</td>
+              <td>{{customer.fullname}}</td>
+              <td>{{customer.email}}</td>
+              <td>{{customer.document}}</td>
+              <td>{{customer.birthDate}}</td>
+              <td>{{customer.phoneNumber}}</td>
+              <td>{{customer.streetAddress}}</td>
+              <td>{{customer.city}}</td>
+              <td>{{customer.state}}</td>
+              <td>{{customer.zipCode}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="!showList">
+    <form>
+      <div class="form-group">
+        <label for="exampleInputName">Nome:</label>
+        <input type="text" class="form-control" id="InputName" aria-describedby="name" placeholder="Nome"
+          [(ngModel)]="customer.fullname" name="name">
+      </div>
+      <div class="form-group">
+        <label for="InputEmail">Email:</label>
+        <input type="email" class="form-control" id="InputEmail" placeholder="Email" [(ngModel)]="customer.email"
+          name="email">
+      </div>
+      <div class="form-group">
+        <label for="InputDocument">Documento:</label>
+        <input type="text" class="form-control" id="InputDocument" placeholder="Documento" [(ngModel)]="customer.document"
+          name="document">
+      </div>
+      <div class="form-group">
+        <label for="InputPhoneNumber">Telefone:</label>
+        <input type="text" class="form-control" id="InputPhoneNumber" placeholder="Telefone" [(ngModel)]="customer.phoneNumber"
+          name="phoneNumber">
+      </div>
+      <div class="form-group">
+        <label for="InputPhoneBirthDate">Data de Nascimento:</label>
+        <input type="date" class="form-control" id="InputBirthDate" placeholder="Data de Nacimento" [(ngModel)]="customer.birthDate"
+          name="birthDate">
+      </div>
+      <div class="form-group">
+        <label for="InputCep">Cep:</label>
+        <input type="text" class="form-control" id="InputCep" placeholder="Cep" [(ngModel)]="customer.zipCode"
+          name="zipCode">
+      </div>
+      <div class="form-group">
+        <label for="InputStreetAddress">Endereço:</label>
+        <input type="text" class="form-control" id="InputStreetAddress" placeholder="Endereço" [(ngModel)]="customer.streetAddress"
+          name="streetAddress">
+      </div>
+      <div class="form-group">
+        <label for="InputCity">Cidade:</label>
+        <input type="text" class="form-control" id="InputCity" placeholder="Cidade" [(ngModel)]="customer.city"
+          name="city">
+      </div>
+      <div class="form-group">
+        <label for="InputState">Estado:</label>
+        <input type="text" class="form-control" id="InputState" placeholder="Estado" [(ngModel)]="customer.state"
+          name="state">
+      </div>
+      <button type="submit" class="btn btn-primary" (click)="save()">Salvar</button>
+    </form>
+  </div>
+

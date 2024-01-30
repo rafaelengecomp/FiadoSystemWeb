@@ -1,52 +1,52 @@
 import { Component } from '@angular/core';
-import { UserService } from '../Shared/services/user.service';
+import { CustomerService } from '../../Shared/services/customer.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-list',
+  selector: 'app-customers',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './user.component.html',
-  styleUrl: './user.component.css'
+  templateUrl: './customers.component.html',
+  styleUrl: './customers.component.css'
 })
-export class UserComponent {
+export class CustomersComponent {
 
-  users: any[] = [];
-  user: any = {};
+  customers: any[] = [];
+  customer: any = {};
   showList: boolean = true;
   userId: any;
 
-  constructor(private userService: UserService) { } 
+  constructor(private customerService: CustomerService) { } 
 
   ngOnInit() {
     this.get();
   } 
 
   get() {
-    this.userService.get().subscribe((data: Object) => {
-      this.users = data as any[];
+    this.customerService.get().subscribe((data: Object) => {
+      this.customers = data as any[];
       this.showList = true;
     }, (error) => {
       console.log(error);
       alert('Erro interno do sistema');
     });
   }
-
+ 
   save() {
-    if (this.user.id) {
+    if (this.customer.id) {
       this.put();
     } else {
       this.post();
-    }    
-  }
+    } 
+  }  
 
   post() {
-    this.userService.post(this.user).subscribe(data => {
+    this.customerService.post(this.customer).subscribe(data => {
       if (data) {
         alert('Usuário cadastrado com sucesso');
         this.get();
-        this.user = {};
+        this.customer = {};
       } else {
         alert('Erro ao cadastrar usuário');
       }
@@ -57,12 +57,11 @@ export class UserComponent {
   }
 
   put() {
-    this.userService.put(this.user).subscribe(data => {
+    this.customerService.put(this.customer).subscribe(data => {
       if (data) {
-        
         alert('Usuário atualizado com sucesso');
         this.get();
-        this.user = {};
+        this.customer = {};
       } else {
         alert('Erro ao atualizar usuário');
       }
@@ -72,14 +71,14 @@ export class UserComponent {
     })
   }
 
-delete(user: any){
+delete(customer: any){
 
-  this.userService.delete(user.id).subscribe(data => {
+  this.customerService.delete(customer.id).subscribe(data => {
     console.log(data);
       if (data) {
         alert('Usuário excluído com sucesso');
         this.get();
-        this.user = {};
+        this.customer = {};
       } else {
         alert('Erro ao excluir usuário');
       }
@@ -89,9 +88,10 @@ delete(user: any){
     })
   }
 
-  openDetails(user: any) {
+  openDetails(customer: any) {
     this.showList = false;
-    this.user = user;
+    this.customer = customer;
   }
+
 
 }
