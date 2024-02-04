@@ -1,0 +1,54 @@
+<button class="btn-primary" (click)="showList = !showList">{{showList ? 'Novo Produto' : 'Lista de Produtos'}}</button>
+<p>Produtos {{products.length}}</p>
+
+<div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div *ngIf="showList">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Ações</th>
+                <th scope="col">Id </th>
+                <th scope="col">Nome </th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Preço unitário</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let product of products">
+                <th scope="row">
+                   <button class="btn-primary" (click)="openDetails(product)">Editar</button> 
+                   <button class="btn-danger" (click)="delete(product)">Excluir</button> 
+                </th>
+                <td>{{product.id}}</td>
+                <td>{{product.name}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.unitPrice}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+   
+  <div *ngIf="!showList">
+    <form>
+      <div class="form-group">
+        <label for="exampleInputName">Nome:</label>
+        <input type="text" class="form-control" id="InputName" aria-describedby="name" placeholder="Nome"
+          [(ngModel)]="product.name" name="name">
+      </div>
+      <div class="form-group">
+        <label for="InputDescription">Descrição:</label>
+        <input type="text" class="form-control" id="InputDescription" placeholder="Descrição" [(ngModel)]="product.description"
+          name="description">
+      </div>
+      <div class="form-group">
+        <label for="InputUnitPrice">Preço unitário:</label>
+        <input type="text" class="form-control" id="InputUnitPrice" placeholder="Preço unitário" [(ngModel)]="product.unitPrice"
+          name="unitPrice">
+      </div>
+      <button type="submit" class="btn btn-primary" (click)="save()">Salvar</button>
+    </form>
+  </div>
