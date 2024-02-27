@@ -19,3 +19,16 @@ a {
     background-color: #c21b1b;
     border-color: #c21b1b;
   }
+
+  .spaced {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .spaced-label {
+    margin-right: 10px;
+  }
+
+  .small-input {
+    width: 200px; /* Adjust as needed */
+  }
