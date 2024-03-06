@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../Shared/services/product.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-products',
@@ -15,6 +16,7 @@ export class ProductsComponent {
   products: any[] = [];
   product: any = {};
   showList: boolean = true;
+  errorMessage: string = '';
 
   constructor(private productService: ProductService) { } 
 
@@ -26,11 +28,13 @@ export class ProductsComponent {
     this.productService.get().subscribe((data: Object) => {
       this.products = data as any[];
       this.showList = true;
-    }, (error) => {
-      console.log(error);
-      alert('Erro interno do sistema');
+    }, (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
     });
-  }
+  };
 
   post() {
     this.productService.post(this.product).subscribe(data => {
@@ -41,11 +45,13 @@ export class ProductsComponent {
       } else {
         alert('Erro ao cadastrar produto');
       }
-    }, error => {
-      console.log(error);
-      alert('erro interno do sistema');
+    }, (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
     });
-  }
+  };
 
   put() {
     this.productService.put(this.product).subscribe(data => {
@@ -56,11 +62,13 @@ export class ProductsComponent {
       } else {
         alert('Erro ao atualizar produto');
       }
-    }, error => {
-      console.log(error);
-      alert('erro interno do sistema');
-    })
-  }
+    }, (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
+    });
+  };
 
 
   delete(product: any){
@@ -91,6 +99,13 @@ export class ProductsComponent {
       } else {
         this.post();
       } 
+      this.errorMessage = '';
     }  
+
+    CleanFields() {
+
+      this.showList = !this.showList;
+      this.errorMessage = '';
+    }
 
 }

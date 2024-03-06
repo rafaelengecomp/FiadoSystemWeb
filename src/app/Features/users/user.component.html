@@ -1,8 +1,13 @@
-<button class="btn-primary" (click)="showList = !showList">{{showList ? 'Novo Usuário' : 'Lista de Usuário'}}</button>
-<p>Usuários {{users.length}}</p>
+<div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+  {{errorMessage}}
+</div>
+
+
 
 
 <div class="container">
+  <button class="btn-primary" (click)="CleanFields()">{{showList ? 'Novo Usuário' : 'Lista de Usuário'}}</button>
+<p>Usuários {{users.length}}</p>
   <div class="row">
     <div class="col-12">
       <div *ngIf="showList">
@@ -34,18 +39,18 @@
 
   <div *ngIf="!showList">
     <form>
-      <div class="form-group">
+      <div class="form-group spaced">
         <label for="exampleInputName">Nome:</label>
         <input type="text" class="form-control" id="exampleInputName" aria-describedby="name" placeholder="Nome"
           [(ngModel)]="user.name" name="name">
 
       </div>
-      <div class="form-group">
+      <div class="form-group spaced">
         <label for="exampleInputEmail">Email:</label>
         <input type="email" class="form-control" id="exampleInputEmail" placeholder="Email" [(ngModel)]="user.email"
           name="email">
       </div>
-      <div class="form-group">
+      <div class="form-group spaced">
         <label for="exampleInputEmail">Senha:</label>
         <input type="password" class="form-control" id="exampleInputPassword" placeholder="Senha"
           [(ngModel)]="user.password" name="password">

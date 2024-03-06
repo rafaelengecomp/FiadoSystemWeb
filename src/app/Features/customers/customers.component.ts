@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CustomerService } from '../../Shared/services/customer.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-customers',
@@ -16,10 +17,23 @@ export class CustomersComponent {
   customer: any = {};
   showList: boolean = true;
   userId: any;
+  errorMessage: string = '';
+
+
+  states = [
+    'AC - Acre', 'AL - Alagoas', 'AP - Amapá', 'AM - Amazonas',
+    'BA - Bahia', 'CE - Ceará', 'DF - Distrito Federal', 'ES - Espírito Santo',
+    'GO - Goiás', 'MA - Maranhão', 'MT - Mato Grosso', 'MS - Mato Grosso do Sul',
+    'MG - Minas Gerais', 'PA - Pará', 'PB - Paraíba', 'PR - Paraná',
+    'PE - Pernambuco', 'PI - Piauí', 'RJ - Rio de Janeiro', 'RN - Rio Grande do Norte',
+    'RS - Rio Grande do Sul', 'RO - Rondônia', 'RR - Roraima', 'SC - Santa Catarina',
+    'SP - São Paulo', 'SE - Sergipe', 'TO - Tocantins'
+]
 
   constructor(private customerService: CustomerService) { } 
 
   ngOnInit() {
+    this.CleanFields();
     this.get();
   } 
 
@@ -27,11 +41,13 @@ export class CustomersComponent {
     this.customerService.get().subscribe((data: Object) => {
       this.customers = data as any[];
       this.showList = true;
-    }, (error) => {
-      console.log(error);
-      alert('Erro interno do sistema');
+    }, (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
     });
-  }
+  };
  
   save() {
     if (this.customer.id) {
@@ -39,9 +55,12 @@ export class CustomersComponent {
     } else {
       this.post();
     } 
+    this.errorMessage = '';
   }  
 
   post() {
+    this.treatStateField();
+
     this.customerService.post(this.customer).subscribe(data => {
       if (data) {
         alert('Usuário cadastrado com sucesso');
@@ -50,13 +69,18 @@ export class CustomersComponent {
       } else {
         alert('Erro ao cadastrar usuário');
       }
-    }, error => {
-      console.log(error);
-      alert('erro interno do sistema');
+    }, (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
     });
-  }
+  };
 
   put() {
+
+    this.treatStateField();
+
     this.customerService.put(this.customer).subscribe(data => {
       if (data) {
         alert('Usuário atualizado com sucesso');
@@ -65,11 +89,13 @@ export class CustomersComponent {
       } else {
         alert('Erro ao atualizar usuário');
       }
-    }, error => {
-      console.log(error);
-      alert('erro interno do sistema');
-    })
-  }
+    }, (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
+    });
+  };
 
 delete(customer: any){
 
@@ -88,10 +114,21 @@ delete(customer: any){
     })
   }
 
-  openDetails(customer: any) {
+openDetails(customer: any) {
     this.showList = false;
     this.customer = customer;
   }
 
+treatStateField() {
+  if (this.customer.state){
+    this.customer.state = this.customer.state.substring(0, 2);
+  }
+}
+
+CleanFields() {
+
+  this.showList = !this.showList;
+  this.errorMessage = '';
+}
 
 }

@@ -5,6 +5,7 @@ import { SalesRegisterService } from '../../Shared/services/sales-register.servi
 import { CustomerService } from '../../Shared/services/customer.service';
 import { ProductService } from '../../Shared/services/product.service';
 import { UserService } from '../../Shared/services/user.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-sales-register',
@@ -15,13 +16,16 @@ import { UserService } from '../../Shared/services/user.service';
 })
 export class SalesRegisterComponent {
 
+  //userId: any;
+
   sales: any[] = [];
   sale: any = {};
   showList: boolean = true;
-  //userId: any;
+
+  filterValue: string = '';
 
   operationTypes: any[] = [];
-  selectedOperationValue: string = '';
+  selectedOperation: string = '';
 
   customers: any[] = [];
   selectedClientValue: string = '';
@@ -32,33 +36,42 @@ export class SalesRegisterComponent {
   users: any[] = [];
   selectedUserValue: string = '';
 
+  filteredSales: any[] = [];
+
+  errorMessage: string = '';
+
   constructor(private salesRegisterService: SalesRegisterService, private customerService: CustomerService, 
               private  productService: ProductService, private userService: UserService) { } 
 
   ngOnInit() {
     
+    this.ClickButtonVendas()
+
     this.get();
     this.getCustomers();
     this.getProducts(); 
     this.getUsers();   
 
     this.operationTypes = [
-      { id: 1, name: 'Compra de Produto' },
-      { id: 2, name: 'Compra de Serviço' },
-      { id: 3, name: 'Compra de Produto não cadastrado' },
-      { id: 4, name: 'Pagamento' },
+      { id: 0, name: 'Compra de Produto' },
+      { id: 1, name: 'Compra de Serviço' },
+      { id: 2, name: 'Compra de Produto não cadastrado' },
+      { id: 3, name: 'Pagamento' },
     ];
   } 
 
   get() {
     this.salesRegisterService.get().subscribe((data: Object) => {
       this.sales = data as any[];
+      this.filterByName();
       this.showList = true;
-    }, (error) => {
-      console.log(error);
-      alert('Erro interno do sistema');
+    }, (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
     });
-  }
+  };
 
   delete(sale: any){
     this.salesRegisterService.delete(sale.id).subscribe(data => {
@@ -76,7 +89,7 @@ export class SalesRegisterComponent {
       })
     }
 
-    openDetails(sale: any) {
+  openDetails(sale: any) {
       
       this.showList = false;
 
@@ -92,34 +105,18 @@ export class SalesRegisterComponent {
        console.log(this.selectedUserValue);
     }
 
-    save() {
-
+  save() {
       if (this.sale.id) {
         this.put();
       } else {
         this.post();
       } 
+      this.errorMessage = '';
     }  
     
   post() {
-   
-    let selectedClientValue =  this.selectedClientValue.split(' - ');
-    this.sale.IdCustomer = selectedClientValue[0];
-    this.sale.Customer = selectedClientValue[1];
-
-    let selectedProductValue = this.selectedProductValue.split(' - ');
-    this.sale.IdProduct = selectedProductValue[0];
-    this.sale.Product = selectedProductValue[1];
-
-    let selectedUserValue = this.selectedUserValue.split(' - ');
-    this.sale.IdUser =  selectedUserValue[0];
-    this.sale.User =  selectedUserValue[1];
-
-    // let selectedOperationValue = this.selectedOperationValue.split(' - ');
-    // this.sale.IdOperation =  selectedOperationValue[0];
-    this.sale.Operation =  this.selectedOperationValue;
-
-
+    
+    this.FillComboValues();
 
     console.log(this.sale);
 
@@ -132,31 +129,19 @@ export class SalesRegisterComponent {
       } else {
         alert('Erro ao cadastrar produto');
       }
-    }, error => {
-      console.log(error);
-      alert('erro interno do sistema');
+    }, 
+    (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
+      //alert('Erro interno do sistema: ' + error.error);
     });
-  }
+  };
 
   put() {
 
-
-    let selectedClientValue =  this.selectedClientValue.split(' - ');
-    this.sale.IdCustomer = selectedClientValue[0];
-    this.sale.Customer = selectedClientValue[1];
-
-    let selectedProductValue = this.selectedProductValue.split(' - ');
-    this.sale.IdProduct = selectedProductValue[0];
-    this.sale.Product = selectedProductValue[1];
-
-    let selectedUserValue = this.selectedUserValue.split(' - ');
-    this.sale.IdUser =  selectedUserValue[0];
-    this.sale.User =  selectedUserValue[1];
-
-    let selectedOperationValue = this.selectedOperationValue.split(' - ');
-    this.sale.IdOperation =  selectedOperationValue[0];
-    this.sale.Operation =  selectedOperationValue[1];
-
+    this.FillComboValues();
 
     this.salesRegisterService.put(this.sale).subscribe(data => {
       if (data) {
@@ -166,11 +151,14 @@ export class SalesRegisterComponent {
       } else {
         alert('Erro ao atualizar produto');
       }
-    }, error => {
-      console.log(error);
-      alert('erro interno do sistema');
-    })
-  }
+    }, (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
+      //alert('Erro interno do sistema: ' + error.error);
+    });
+  };
 
   getCustomers() {
     this.customerService.get().subscribe((data: Object) => {
@@ -202,15 +190,74 @@ export class SalesRegisterComponent {
     });
   }
 
-  getOperationText(operation: number): string {
+  getOperationText(operation: string): string {
     switch(operation) {
-      case 1: return 'Compra de produto';
-      case 2: return 'Compra de serviço';
-      case 3: return 'Compra de produto não cadastrado';
-      case 4: return 'Pagamento';
+      case "PurchaseProduct": return 'Compra de produto';
+      case "PurchaseService": return 'Compra de serviço';
+      case "PurchaseProductNotInStock": return 'Compra de produto não cadastrado';
+      case "Payment": return 'Pagamento';
       default: return 'Operação desconhecida';
     }
   }
+
+  FillComboValues() {
+
+    if (this.selectedClientValue){
+      let selectedClientValue =  this.selectedClientValue.split(' - ');
+      this.sale.IdCustomer = selectedClientValue[0];
+      this.sale.Customer = selectedClientValue[1];
+ 
+     }
+ 
+     if (this.selectedProductValue){
+      let selectedProductValue = this.selectedProductValue.split(' - ');
+      this.sale.IdProduct = selectedProductValue[0];
+      this.sale.Product = selectedProductValue[1];
+     }
+ 
+     if (this.selectedUserValue){
+      let selectedUserValue = this.selectedUserValue.split(' - ');
+      this.sale.IdUser =  selectedUserValue[0];
+      this.sale.User =  selectedUserValue[1];
+     }
+
+if  (this.selectedOperation){
+     this.sale.Operation =  this.selectedOperation;
+  }
+
+}
+
+ClickButtonVendas() {
+  
+  this.showList = !this.showList
+  
+  this.sale.id = '';
+  this.selectedClientValue = '';
+  this.selectedOperation = '';
+  this.sale.description = '';
+  this.selectedProductValue = '';
+  this.sale.operationValue = '';
+  this.selectedUserValue = '';
+  this.errorMessage = '';
+}
+
+filterByName() {
+  if (this.filterValue) {
+    this.filteredSales = this.sales.filter(sale => sale.customer.includes(this.filterValue));
+  } else {
+    this.filteredSales = this.sales;
+  }
+}
+
+downloadPdfByClient(userId: string) {
+  this.salesRegisterService.generatePdfDashboardByClient(userId).subscribe(blob => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'document.pdf';
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+}
 
 
 }

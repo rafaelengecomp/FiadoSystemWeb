@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UserService } from '../../Shared/services/user.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-list',
@@ -16,6 +17,7 @@ export class UserComponent {
   user: any = {};
   showList: boolean = true;
   userId: any;
+  errorMessage: string = '';
 
   constructor(private userService: UserService) { } 
 
@@ -27,11 +29,13 @@ export class UserComponent {
     this.userService.get().subscribe((data: Object) => {
       this.users = data as any[];
       this.showList = true;
-    }, (error) => {
-      console.log(error);
-      alert('Erro interno do sistema');
+    }, (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
     });
-  }
+  };
 
   save() {
     if (this.user.id) {
@@ -39,6 +43,7 @@ export class UserComponent {
     } else {
       this.post();
     }    
+    this.errorMessage = '';
   }
 
   post() {
@@ -50,11 +55,13 @@ export class UserComponent {
       } else {
         alert('Erro ao cadastrar usuário');
       }
-    }, error => {
-      console.log(error);
-      alert('erro interno do sistema');
+    },(error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
     });
-  }
+  };
 
   put() {
     this.userService.put(this.user).subscribe(data => {
@@ -66,11 +73,13 @@ export class UserComponent {
       } else {
         alert('Erro ao atualizar usuário');
       }
-    }, error => {
-      console.log(error);
-      alert('erro interno do sistema');
-    })
-  }
+    }, (error: HttpErrorResponse) => {
+      console.error('Error status:', error.status);
+      console.error('Error message:', error.error);
+
+      this.errorMessage = 'Erro: ' + error.error;
+    });
+  };
 
 delete(user: any){
 
@@ -93,5 +102,12 @@ delete(user: any){
     this.showList = false;
     this.user = user;
   }
+
+  CleanFields() {
+
+    this.showList = !this.showList;
+    this.errorMessage = '';
+  }
+  
 
 }
