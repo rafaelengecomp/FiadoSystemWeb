@@ -24,7 +24,7 @@
                 <td>{{product.id}}</td>
                 <td>{{product.name}}</td>
                 <td>{{product.productDescription}}</td>
-                <td>{{product.unitPrice}}</td>
+                <td>{{product.unitPrice | currency:'BRL':'R$':'1.2-2'}}</td>
               </tr>
             </tbody>
           </table>

@@ -8,6 +8,10 @@ a {
     color: #e01a76;
   }
   
+  .form-background {
+    background-color: #6eb1cf;
+  }
+
   .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -21,8 +25,8 @@ a {
   }
 
   .spaced {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
   }
 
   .spaced-label {
@@ -32,3 +36,4 @@ a {
   .small-input {
     width: 200px; /* Adjust as needed */
   }
+

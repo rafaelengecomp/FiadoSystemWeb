@@ -1,7 +1,18 @@
-<button class="btn-primary" (click)="showList = !showList">{{showList ? 'Nova Venda' : 'Lista de Vendas'}}</button>
+<div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+  {{errorMessage}}
+</div>
+
+<button class="btn-primary" (click)="ClickButtonVendas()">{{showList ? 'Nova Venda' : 'Lista de Vendas'}}</button>
 <p>Lista de Vendas {{sales.length}}</p>
 
+
 <div class="container">
+  <div class="row" *ngIf="showList">
+    <div class="d-flex justify-content-end">
+      <input [(ngModel)]="filterValue" (ngModelChange)="filterByName()" placeholder="Filtro por nome">
+    </div>
+  </div>
+
     <div class="row">
       <div class="col-12">
         <div *ngIf="showList">
@@ -12,31 +23,31 @@
                 <th scope="col">Descrição</th>
                 <th scope="col">Operação </th>
                 <th scope="col">Valor venda </th>
-                <th scope="col">Id Cliente </th>
+                <!-- <th scope="col">Id Cliente </th> -->
                 <th scope="col">Cliente </th>
-                <th scope="col">Id Produto</th>
-                <th scope="col">Produto</th>
-                <th scope="col">Id Usuário</th>
+                <!-- <th scope="col">Id Produto</th> -->
+                <!-- <th scope="col">Produto</th> -->
+                <!-- <th scope="col">Id Usuário</th> -->
                 <th scope="col">Usuário</th>
                 <th scope="col">Criado em</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let sale of sales">
+              <tr *ngFor="let sale of filteredSales">
                 <th scope="row">
                     <button class="btn-primary" (click)="openDetails(sale)">Editar</button> 
                     <button class="btn-danger" (click)="delete(sale)">Excluir</button> 
                  </th>
                 <td>{{sale.description}}</td>
                 <td>{{getOperationText(sale.operation)}}</td>
-                <td>{{sale.operationValue}}</td>
-                <td>{{sale.idCustomer}}</td>
+                <td>{{sale.operationValue | currency:'BRL':'R$':'1.2-2'}}</td>
+                <!-- <td>{{sale.idCustomer}}</td> -->
                 <td>{{sale.customer}}</td>
-                <td>{{sale.idProduct}}</td>
-                <td>{{sale.product}}</td>
-                <td>{{sale.idUser}}</td>
+                <!-- <td>{{sale.idProduct}}</td> -->
+                <!-- <td>{{sale.product}}</td> -->
+                <!-- <td>{{sale.idUser}}</td> -->
                 <td>{{sale.user}}</td>
-                <td>{{sale.createdAt}}</td>
+                <td>{{sale.createdAt | date:'dd/MM/yyyy'}}</td>
               </tr>
             </tbody>
           </table>
@@ -44,49 +55,53 @@
       </div>
     </div>
 
-
-    <div *ngIf="!showList">
-        <form>
-
-         <div class="dropdown spaced">
-            <label class="spaced-label" for="InputClientsValue">Cliente: </label>
-            <select id="InputClientsValue" name="InputClientsValue" placeholder="Cliente" [(ngModel)]="selectedClientValue">
-              <option *ngFor="let value of customers" [value]="value.id + ' - ' + value.fullname">{{value.id + ' - ' + value.fullname }}</option>
-            </select>
+  <div *ngIf="!showList">
+      <form>
+       <div class="dropdown spaced">
+          <label class="spaced-label" for="InputClientsValue">Cliente: </label>
+          <select id="InputClientsValue" name="InputClientsValue" placeholder="Cliente" [(ngModel)]="selectedClientValue" required>
+            <option *ngFor="let value of customers" [value]="value.id + ' - ' + value.fullname">{{value.id + ' - ' + value.fullname }}</option>
+          </select>
         </div>
 
-        <div class="dropdown spaced">
-            <label class="spaced-label" for="InputOperationValue">Tipo Operação: </label>
-            <select id="InputOperationValue" name="InputOperationValue" placeholder="Tipo Operação" [(ngModel)]="selectedOperationValue">
-              <!-- <option *ngFor="let value of operationTypes" [value]="value.id + ' - ' + value.name">{{value.id + ' - ' + value.name }}</option> -->
-              <option *ngFor="let value of operationTypes" [value]="value.id">{{value.name}}</option>
-            </select>
-        </div>
- 
-         <div class="form-group">
-            <label for="InputDescription">Descrição: </label>
-            <textarea class="form-control"  type="textarea" id="InputDescription" placeholder="Descrição" [(ngModel)]="sale.description" name="description"></textarea>
-        </div> 
-
-         <div class="dropdown spaced">
-            <label class="spaced-label" for="InputProductsValue">Produtos: </label>
-            <select id="InputProductsValue" name="InputProductsValue" [(ngModel)]="selectedProductValue">
-              <option *ngFor="let value of products" [value]="value.id + ' - ' + value.productDescription">{{value.id + ' - ' + value.productDescription }}</option>
-            </select>
-        </div>
-     
-          <div class="form-group">
-            <label class="spaced-label" for="InputDescription">Valor: </label>
-            <input type="text" class="small-input" id="InputDescription" placeholder="Valor" [(ngModel)]="sale.operationValue" name="value">
-          </div>
-
-         <div class="dropdown spaced">
-            <label class="spaced-label" for="InputUserValue">Vendedor: </label>
-            <select id="InputUserValue" name="InputUserValue" [(ngModel)]="selectedUserValue">
-              <option *ngFor="let value of users" [value]="value.id + ' - ' + value.name">{{value.id + ' - ' + value.name }}</option>
-            </select>
-        </div> 
-
-          <button type="submit" class="btn btn-primary" (click)="save()">Salvar</button>
-        </form>
+      <div class="dropdown spaced">
+          <label class="spaced-label" for="InputOperationValue">Tipo Operação: </label>
+          <select id="InputOperationValue" name="InputOperationValue" placeholder="Tipo Operação" [(ngModel)]="selectedOperation">
+            <option *ngFor="let value of operationTypes" [value]="value.id">{{value.name}}</option>
+          </select>
       </div>
+
+       <div class="form-group">
+          <label for="InputDescription">Descrição: </label>
+          <textarea class="form-control"  style="height: 300px;" type="textarea" id="InputDescription" placeholder="Descrição" [(ngModel)]="sale.description" name="description"></textarea>
+      </div> 
+
+       <!-- <div class="dropdown spaced">
+          <label class="spaced-label" for="InputProductsValue">Produtos: </label>
+          <select id="InputProductsValue" name="InputProductsValue" [(ngModel)]="selectedProductValue">
+            <option *ngFor="let value of products" [value]="value.id + ' - ' + value.productDescription">{{value.id + ' - ' + value.productDescription }}</option>
+          </select>
+      </div> -->
+
+       <div class="dropdown spaced">
+          <label class="spaced-label" for="InputUserValue">Vendedor: </label>
+          <select id="InputUserValue" name="InputUserValue" [(ngModel)]="selectedUserValue">
+            <option *ngFor="let value of users" [value]="value.id + ' - ' + value.name">{{value.id + ' - ' + value.name }}</option>
+          </select>
+      </div> 
+
+
+      <div class="form-group spaced ">
+        <label class="spaced-label" for="InputDescription">Valor: </label>
+        <input type="text" class="small-input" id="InputDescription" placeholder="R$" [(ngModel)]="sale.operationValue" name="value" >
+      </div>
+
+
+        <button type="submit" class="btn btn-primary" (click)="save()">Salvar</button>
+      </form>
+    </div>
+
+
+</div>
+
+    

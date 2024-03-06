@@ -11,6 +11,12 @@ import { CommonModule } from '@angular/common';
 })
 export class NavMenuComponent {
 
+  ngOnInit() {
+
+  
+
+  }
+
   isExpanded = false;
 
   collapse() {
