@@ -18,6 +18,8 @@ export class CustomersComponent {
   showList: boolean = true;
   userId: any;
   errorMessage: string = '';
+  userLogged: any = {};
+  isAuthenticated: boolean = false;
 
 
   states = [
@@ -34,6 +36,7 @@ export class CustomersComponent {
 
   ngOnInit() {
     this.CleanFields();
+    this.getUserData();
     this.get();
   } 
 
@@ -129,6 +132,11 @@ CleanFields() {
 
   this.showList = !this.showList;
   this.errorMessage = '';
+}
+
+getUserData() {
+  this.userLogged = JSON.parse(localStorage.getItem('user_logged') as string);
+  this.isAuthenticated = this.userLogged != null;
 }
 
 }

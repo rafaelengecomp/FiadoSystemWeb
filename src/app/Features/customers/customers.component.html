@@ -3,16 +3,14 @@
 </div>
 
 
-
-
 <div class="container">
-
+ <div *ngIf="isAuthenticated">
   <button class="btn-primary" (click)="CleanFields()">{{showList ? 'Novo Cliente' : 'Lista de Clientes'}}</button>
-<p>Clientes {{customers.length}}</p>
-
+  <p>Clientes {{customers.length}}</p>
+ </div>
   <div class="row">
     <div class="col-12">
-      <div *ngIf="showList">
+      <div *ngIf="showList && isAuthenticated">
         <table class="table">
           <thead>
             <tr>
@@ -53,7 +51,7 @@
   </div>
 
 
-  <div *ngIf="!showList">
+  <div *ngIf="!showList && isAuthenticated">
     <form>
       <div class="form-group spaced">
         <label for="exampleInputName">Nome:</label>

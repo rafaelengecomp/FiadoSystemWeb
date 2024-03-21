@@ -3,18 +3,22 @@
 </div>
 
 <!-- <button (click)="downloadPdfByClient()">Download PDF</button> -->
-
+<p *ngIf="isAuthenticated">Bem-vindo ({{userLogged?.user?.name}})</p>
 <div class="container">
-  
-<button class="btn-primary" (click)="ClickButtonVendas()">{{showList ? 'Nova Venda/Pagamento' : 'Lista Vendas/Pagamentos'}}</button>
-<p>Lista de Vendas {{sales.length}}</p>
-  <div class="row" *ngIf="showList">
+ 
+  <div *ngIf="showList && isAuthenticated">
+    <button class="btn-primary" (click)="ClickButtonVendas()">{{showList ? 'Nova Venda/Pagamento' : 'Lista Vendas/Pagamentos'}}</button>
+    <p>Lista de Vendas {{sales.length}}</p>
+  </div>
+
+
+  <div class="row" *ngIf="showList && isAuthenticated">
     <div class="d-flex justify-content-end">
       <input [(ngModel)]="filterValue" (ngModelChange)="filterByName()" placeholder="Filtro por nome">
     </div>
   </div>
 
-    <div class="row">
+    <div class="row" *ngIf="showList && isAuthenticated">
       <div class="col-12">
         <div *ngIf="showList">
           <table class="table">
@@ -58,7 +62,7 @@
       </div>
     </div>
 
-  <div *ngIf="!showList">
+  <div *ngIf="!showList && isAuthenticated">
       <form>
        <div class="dropdown spaced">
           <label class="spaced-label" for="InputClientsValue">Cliente: </label>

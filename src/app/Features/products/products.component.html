@@ -4,12 +4,14 @@
 
 <div class="container">
 
-  <button class="btn-primary" (click)="CleanFields()">{{showList ? 'Novo Produto' : 'Lista de Produtos'}}</button>
-  <p>Produtos {{products.length}}</p>
+  <div *ngIf="isAuthenticated">
+    <button class="btn-primary" (click)="CleanFields()">{{showList ? 'Novo Produto' : 'Lista de Produtos'}}</button>
+    <p>Produtos {{products.length}}</p>
+  </div>
 
-    <div class="row">
+  <div class="row">
       <div class="col-12">
-        <div *ngIf="showList">
+        <div *ngIf="showList && isAuthenticated">
           <table class="table">
             <thead>
               <tr>
@@ -37,7 +39,7 @@
       </div>
     </div>
    
-  <div *ngIf="!showList">
+  <div *ngIf="!showList && isAuthenticated">
     <form>
       <div class="form-group spaced">
         <label for="exampleInputName">Nome:</label>

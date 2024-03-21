@@ -3,6 +3,7 @@ import { UserService } from '../../Shared/services/user.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list',
@@ -15,14 +16,21 @@ export class UserComponent {
 
   users: any[] = [];
   user: any = {};
+  userLogin: any = {};
+  userLogged: any = {};
   showList: boolean = true;
   userId: any;
   errorMessage: string = '';
+  isAuthenticated: boolean = false;
 
-  constructor(private userService: UserService) { } 
+  constructor(private userService: UserService, private router: Router) { } 
 
   ngOnInit() {
-    this.get();
+    this.getUserData();
+
+    if (this.isAuthenticated) {
+        this.get();
+      }
   } 
 
   get() {
@@ -97,6 +105,29 @@ delete(user: any){
       alert('erro interno do sistema');
     })
   }
+
+  authenticate() {
+    this.userService.authenticate(this.userLogin).subscribe((data:any) => {
+      if (data.user) {
+        localStorage.setItem('user_logged', JSON.stringify(data));
+        //this.get();
+        this.getUserData();
+
+        this.router.navigate(['/sales']);
+      } else {
+        alert('User invalid.');
+      }      
+    }, error => {
+      console.log(error);
+        alert('User invalid');
+    })
+  }
+
+  getUserData() {
+    this.userLogged = JSON.parse(localStorage.getItem('user_logged') as string);
+    this.isAuthenticated = this.userLogged != null;
+  }
+
 
   openDetails(user: any) {
     this.showList = false;

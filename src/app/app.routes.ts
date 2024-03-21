@@ -8,10 +8,10 @@ import { SalesRegisterComponent as SalesRegisterComponent } from './Features/sal
 
 export const routes: Routes = [
 
-    { path: '', component: SalesRegisterComponent },
+    { path: '', component: UserComponent },
     { path: 'nav-menu', component: NavMenuComponent },
     { path: 'users', component: UserComponent },
     { path: 'customers', component: CustomersComponent },
     { path: 'products', component: ProductsComponent },
-   // { path: 'sales', component: SalesRegisterComponent },
+    { path: 'sales', component: SalesRegisterComponent },
 ];

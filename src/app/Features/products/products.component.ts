@@ -16,12 +16,17 @@ export class ProductsComponent {
   products: any[] = [];
   product: any = {};
   showList: boolean = true;
+  userLogged: any = {};
+  isAuthenticated: boolean = false;
   errorMessage: string = '';
+
 
   constructor(private productService: ProductService) { } 
 
   ngOnInit() {
+    this.getUserData();
     this.get();
+
   } 
 
   get() {
@@ -106,6 +111,11 @@ export class ProductsComponent {
 
       this.showList = !this.showList;
       this.errorMessage = '';
+    }
+
+    getUserData() {
+      this.userLogged = JSON.parse(localStorage.getItem('user_logged') as string);
+      this.isAuthenticated = this.userLogged != null;
     }
 
 }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common'; 
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav-menu',
@@ -12,10 +13,9 @@ import { CommonModule } from '@angular/common';
 export class NavMenuComponent {
 
   ngOnInit() {
-
-  
-
   }
+
+  constructor(private router: Router) { } 
 
   isExpanded = false;
 
@@ -27,5 +27,10 @@ export class NavMenuComponent {
     this.isExpanded = !this.isExpanded;
   }
 
+
+  logoff() {
+    localStorage.removeItem('user_logged');
+    this.router.navigate(['/']); // navigate to login page
+  }
 
 }

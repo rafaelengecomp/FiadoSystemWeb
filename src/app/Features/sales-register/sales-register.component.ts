@@ -38,6 +38,10 @@ export class SalesRegisterComponent {
 
   filteredSales: any[] = [];
 
+  userLogged: any = {};
+
+  isAuthenticated: boolean = false;
+
   errorMessage: string = '';
 
   constructor(private salesRegisterService: SalesRegisterService, private customerService: CustomerService, 
@@ -47,10 +51,14 @@ export class SalesRegisterComponent {
     
     this.ClickButtonVendas()
 
-    this.get();
-    this.getCustomers();
-    this.getProducts(); 
-    this.getUsers();   
+    this.getUserData();
+    if (this.isAuthenticated) {
+      this.get();
+      this.getCustomers();
+      this.getProducts(); 
+      this.getUsers();   
+
+    }
 
     this.operationTypes = [
       { id: 0, name: 'Compra de Produto' },
@@ -257,6 +265,11 @@ downloadPdfByClient(userId: string) {
     link.click();
     URL.revokeObjectURL(link.href);
   });
+}
+
+getUserData() {
+  this.userLogged = JSON.parse(localStorage.getItem('user_logged') as string);
+  this.isAuthenticated = this.userLogged != null;
 }
 
 
