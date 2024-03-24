@@ -66,11 +66,11 @@ export class CustomersComponent {
 
     this.customerService.post(this.customer).subscribe(data => {
       if (data) {
-        alert('Usuário cadastrado com sucesso');
+        alert('Cliente cadastrado com sucesso');
         this.get();
         this.customer = {};
       } else {
-        alert('Erro ao cadastrar usuário');
+        alert('Erro ao cadastrar Cliente');
       }
     }, (error: HttpErrorResponse) => {
       console.error('Error status:', error.status);
@@ -86,11 +86,11 @@ export class CustomersComponent {
 
     this.customerService.put(this.customer).subscribe(data => {
       if (data) {
-        alert('Usuário atualizado com sucesso');
+        alert('Cliente atualizado com sucesso');
         this.get();
         this.customer = {};
       } else {
-        alert('Erro ao atualizar usuário');
+        alert('Erro ao atualizar Cliente');
       }
     }, (error: HttpErrorResponse) => {
       console.error('Error status:', error.status);
@@ -105,11 +105,11 @@ delete(customer: any){
   this.customerService.delete(customer.id).subscribe(data => {
     console.log(data);
       if (data) {
-        alert('Usuário excluído com sucesso');
+        alert('Cliente excluído com sucesso');
         this.get();
         this.customer = {};
       } else {
-        alert('Erro ao excluir usuário');
+        alert('Erro ao excluir Cliente');
       }
     }, error => {
       console.log(error);
@@ -120,6 +120,9 @@ delete(customer: any){
 openDetails(customer: any) {
     this.showList = false;
     this.customer = customer;
+
+    this.customer.state = this.customer.state.substring(0, 2) +' - '+ this.getStateName(this.customer.state.substring(0, 2));
+    console.log(this.customer);
   }
 
 treatStateField() {
@@ -138,5 +141,21 @@ getUserData() {
   this.userLogged = JSON.parse(localStorage.getItem('user_logged') as string);
   this.isAuthenticated = this.userLogged != null;
 }
+
+getStateName(abbreviation: string): string {
+ 
+  const states: {[key: string]: string} = {
+    'AC': 'Acre', 'AL': 'Alagoas', 'AP': 'Amapá', 'AM': 'Amazonas',
+    'BA': 'Bahia', 'CE': 'Ceará', 'DF': 'Distrito Federal', 'ES': 'Espírito Santo',
+    'GO': 'Goiás', 'MA': 'Maranhão', 'MT': 'Mato Grosso', 'MS': 'Mato Grosso do Sul',
+    'MG': 'Minas Gerais', 'PA': 'Pará', 'PB': 'Paraíba', 'PR': 'Paraná',
+    'PE': 'Pernambuco', 'PI': 'Piauí', 'RJ': 'Rio de Janeiro', 'RN': 'Rio Grande do Norte',
+    'RS': 'Rio Grande do Sul', 'RO': 'Rondônia', 'RR': 'Roraima', 'SC': 'Santa Catarina',
+    'SP': 'São Paulo', 'SE': 'Sergipe', 'TO': 'Tocantins'
+  };
+
+  return states[abbreviation] || 'State not found';
+}
+
 
 }

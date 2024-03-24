@@ -6,17 +6,17 @@ import { CustomerService } from '../../Shared/services/customer.service';
 import { ProductService } from '../../Shared/services/product.service';
 import { UserService } from '../../Shared/services/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-sales-register',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatPaginatorModule],
   templateUrl: './sales-register.component.html',
   styleUrl: './sales-register.component.css'
 })
 export class SalesRegisterComponent {
-
-  //userId: any;
 
   sales: any[] = [];
   sale: any = {};
@@ -44,6 +44,14 @@ export class SalesRegisterComponent {
 
   errorMessage: string = '';
 
+  //totalSales = 100; // replace with your actual total sales count
+ 
+ // pageEvent: PageEvent = new PageEvent();
+
+ totalSales = 100; // replace with your actual total sales count
+ salesPerPage = 10; // initial page size
+ currentPage = 1; // initial page index
+
   constructor(private salesRegisterService: SalesRegisterService, private customerService: CustomerService, 
               private  productService: ProductService, private userService: UserService) { } 
 
@@ -68,6 +76,12 @@ export class SalesRegisterComponent {
     ];
   } 
 
+  pageEvent(event: PageEvent) {
+    this.currentPage = event.pageIndex + 1;
+    this.salesPerPage = event.pageSize;
+  }
+
+
   get() {
     this.salesRegisterService.get().subscribe((data: Object) => {
       this.sales = data as any[];
@@ -85,11 +99,11 @@ export class SalesRegisterComponent {
     this.salesRegisterService.delete(sale.id).subscribe(data => {
       console.log(data);
         if (data) {
-          alert('Venda excluída com sucesso');
+          alert('Registro excluída com sucesso');
           this.get();
           this.sale = {};
         } else {
-          alert('Erro ao excluir venda');
+          alert('Erro ao excluir registro');
         }
       }, error => {
         console.log(error);
@@ -104,6 +118,7 @@ export class SalesRegisterComponent {
       this.selectedClientValue = sale.idCustomer + ' - ' + sale.customer;
       this.selectedProductValue = sale.idProduct + ' - ' + sale.product;
       this.selectedUserValue = sale.idUser + ' - ' + sale.user;
+      this.selectedOperation = this.GetOperationID(sale).toString();
 
       this.sale = sale;
 
@@ -111,6 +126,7 @@ export class SalesRegisterComponent {
        console.log(this.selectedClientValue);
        console.log(this.selectedProductValue);
        console.log(this.selectedUserValue);
+       console.log(this.selectedOperation);
     }
 
   save() {
@@ -131,11 +147,11 @@ export class SalesRegisterComponent {
     this.salesRegisterService.post(this.sale).subscribe(data => {
       
       if (data) {
-        alert('Produto cadastrado com sucesso');
+        alert('Registro cadastrado com sucesso');
         this.get();
         this.sale = {};
       } else {
-        alert('Erro ao cadastrar produto');
+        alert('Erro ao registro produto');
       }
     }, 
     (error: HttpErrorResponse) => {
@@ -143,7 +159,7 @@ export class SalesRegisterComponent {
       console.error('Error message:', error.error);
 
       this.errorMessage = 'Erro: ' + error.error;
-      //alert('Erro interno do sistema: ' + error.error);
+      
     });
   };
 
@@ -153,18 +169,17 @@ export class SalesRegisterComponent {
 
     this.salesRegisterService.put(this.sale).subscribe(data => {
       if (data) {
-        alert('Produto atualizado com sucesso');
+        alert('Registro atualizado com sucesso');
         this.get();
         this.sale = {};
       } else {
-        alert('Erro ao atualizar produto');
+        alert('Erro ao atualizar registro');
       }
     }, (error: HttpErrorResponse) => {
       console.error('Error status:', error.status);
       console.error('Error message:', error.error);
 
       this.errorMessage = 'Erro: ' + error.error;
-      //alert('Erro interno do sistema: ' + error.error);
     });
   };
 
@@ -261,7 +276,7 @@ downloadPdfByClient(userId: string) {
   this.salesRegisterService.generatePdfDashboardByClient(userId).subscribe(blob => {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'document.pdf';
+    link.download = 'documento.pdf';
     link.click();
     URL.revokeObjectURL(link.href);
   });
@@ -272,5 +287,22 @@ getUserData() {
   this.isAuthenticated = this.userLogged != null;
 }
 
+GetOperationID(sale: any){
 
+  if (sale.operation == 'PurchaseProduct')
+    return 0;
+
+  if (sale.operation == 'PurchaseService')
+    return 1;
+
+  if (sale.operation == 'PurchaseProductNotInStock')
+    return 2;
+
+    if (sale.operation == 'Payment'){
+      return 3;
+    }
+
+    return 4;
+
+  }
 }

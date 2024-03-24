@@ -30,8 +30,10 @@
           <tbody>
             <tr *ngFor="let customer of customers">
               <th scope="row">
-                 <button class="btn-primary" (click)="openDetails(customer)">Editar</button> 
-                 <button class="btn-danger" (click)="delete(customer)">Excluir</button> 
+                 <!-- <button class="btn-primary" (click)="openDetails(customer)">Editar</button> 
+                 <button class="btn-danger" (click)="delete(customer)">Excluir</button>  -->
+                 <button class="btn-primary" (click)="openDetails(customer)"><i class="fa fa-pencil"></i></button>
+                 <button class="btn-danger" (click)="delete(customer)"><i class="fa fa-times"></i></button>
               </th>
               <td>{{customer.id}}</td>
               <td>{{customer.fullname}}</td>
@@ -88,6 +90,7 @@
         <input type="text" class="form-control" id="InputStreetAddress" placeholder="Endereço" [(ngModel)]="customer.streetAddress"
           name="streetAddress">
       </div>
+      
       <div class="form-group spaced">
         <label for="InputState">Estado:</label>
         <select class="form-control" id="InputState" [(ngModel)]="customer.state" name="state">

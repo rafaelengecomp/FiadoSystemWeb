@@ -38,12 +38,21 @@ export class UserComponent {
       this.users = data as any[];
       this.showList = true;
     }, (error: HttpErrorResponse) => {
-      console.error('Error status:', error.status);
-      console.error('Error message:', error.error);
-
-      this.errorMessage = 'Erro: ' + error.error;
-    });
-  };
+      
+    if(error.status == 401){
+      
+      this.errorMessage = '';
+      this.logoff();
+    }
+    else {
+        
+        console.error('Error status:', error.status);
+        console.error('Error message:', error.error);
+        this.errorMessage = 'Erro: ' + error.error;
+    }
+   
+  });
+};
 
   save() {
     if (this.user.id) {
@@ -64,6 +73,8 @@ export class UserComponent {
         alert('Erro ao cadastrar usuário');
       }
     },(error: HttpErrorResponse) => {
+      
+      
       console.error('Error status:', error.status);
       console.error('Error message:', error.error);
 
@@ -140,5 +151,9 @@ delete(user: any){
     this.errorMessage = '';
   }
   
+  logoff() {
+    localStorage.removeItem('user_logged');
+    this.router.navigate(['/']); 
+  }
 
 }
