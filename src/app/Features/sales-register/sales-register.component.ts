@@ -6,13 +6,14 @@ import { CustomerService } from '../../Shared/services/customer.service';
 import { ProductService } from '../../Shared/services/product.service';
 import { UserService } from '../../Shared/services/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { PageEvent } from '@angular/material/paginator';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { ToastrService } from 'ngx-toastr';
+import { NgxSpinner, NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-sales-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatPaginatorModule],
+  imports: [CommonModule, FormsModule, MatPaginatorModule, NgxSpinnerModule],
   templateUrl: './sales-register.component.html',
   styleUrl: './sales-register.component.css'
 })
@@ -44,28 +45,21 @@ export class SalesRegisterComponent {
 
   errorMessage: string = '';
 
-  //totalSales = 100; // replace with your actual total sales count
- 
- // pageEvent: PageEvent = new PageEvent();
-
- totalSales = 100; // replace with your actual total sales count
- salesPerPage = 10; // initial page size
- currentPage = 1; // initial page index
-
   constructor(private salesRegisterService: SalesRegisterService, private customerService: CustomerService, 
-              private  productService: ProductService, private userService: UserService) { } 
+              private  productService: ProductService, private userService: UserService, private toastr: ToastrService, 
+              private spinner: NgxSpinnerService) { } 
 
   ngOnInit() {
-    
     this.ClickButtonVendas()
 
     this.getUserData();
+    
     if (this.isAuthenticated) {
-      this.get();
-      this.getCustomers();
-      this.getProducts(); 
-      this.getUsers();   
-
+      
+        this.get();
+        this.getCustomers();
+        this.getProducts(); 
+        this.getUsers();   
     }
 
     this.operationTypes = [
@@ -76,38 +70,39 @@ export class SalesRegisterComponent {
     ];
   } 
 
-  pageEvent(event: PageEvent) {
-    this.currentPage = event.pageIndex + 1;
-    this.salesPerPage = event.pageSize;
-  }
-
-
   get() {
+    this.spinner.show();
     this.salesRegisterService.get().subscribe((data: Object) => {
       this.sales = data as any[];
       this.filterByName();
       this.showList = true;
+      this.spinner.hide();
     }, (error: HttpErrorResponse) => {
       console.error('Error status:', error.status);
       console.error('Error message:', error.error);
 
       this.errorMessage = 'Erro: ' + error.error;
+      this.spinner.hide();
     });
   };
 
   delete(sale: any){
+    this.spinner.show();
     this.salesRegisterService.delete(sale.id).subscribe(data => {
       console.log(data);
         if (data) {
-          alert('Registro excluída com sucesso');
+          this.toastr.success('Registro excluído com sucesso', 'Sucesso!');
           this.get();
           this.sale = {};
+          this.spinner.hide();
         } else {
-          alert('Erro ao excluir registro');
+          this.toastr.error('Erro ao excluir registro', 'Erro!');
+          this.spinner.hide();
         }
       }, error => {
         console.log(error);
-        alert('erro interno do sistema');
+        this.toastr.error('Erro ao excluir registro', 'Erro!');
+        this.spinner.hide();
       })
     }
 
@@ -139,19 +134,25 @@ export class SalesRegisterComponent {
     }  
     
   post() {
-    
+    this.spinner.show();
     this.FillComboValues();
+
+    if (this.sale.operationValue == null || this.sale.operationValue == undefined || this.sale.operationValue == "") {
+        this.sale.operationValue = 0
+    }
 
     console.log(this.sale);
 
     this.salesRegisterService.post(this.sale).subscribe(data => {
       
       if (data) {
-        alert('Registro cadastrado com sucesso');
+        this.toastr.success('Registro cadastrado com sucesso', 'Sucesso!');
         this.get();
         this.sale = {};
+        this.spinner.hide();
       } else {
-        alert('Erro ao registro produto');
+        this.toastr.error('Erro ao registrar', 'Erro!');
+        this.spinner.hide();
       }
     }, 
     (error: HttpErrorResponse) => {
@@ -159,27 +160,32 @@ export class SalesRegisterComponent {
       console.error('Error message:', error.error);
 
       this.errorMessage = 'Erro: ' + error.error;
-      
+      this.spinner.hide();
     });
   };
 
   put() {
-
+    this.spinner.show();
     this.FillComboValues();
 
     this.salesRegisterService.put(this.sale).subscribe(data => {
       if (data) {
-        alert('Registro atualizado com sucesso');
+        
+        this.toastr.success('Registro atualizado com sucesso', 'Sucesso!');
         this.get();
         this.sale = {};
+        this.spinner.hide();
       } else {
-        alert('Erro ao atualizar registro');
+        
+        this.toastr.error('Erro ao atualizar registro', 'Erro!');
+        this.spinner.hide();
       }
     }, (error: HttpErrorResponse) => {
       console.error('Error status:', error.status);
       console.error('Error message:', error.error);
 
       this.errorMessage = 'Erro: ' + error.error;
+      this.spinner.hide();
     });
   };
 
@@ -189,7 +195,7 @@ export class SalesRegisterComponent {
       this.showList = true;
     }, (error) => {
       console.log(error);
-      alert('Erro interno do sistema');
+      this.toastr.error('Erro interno do sistema', 'Erro!');
     });
   }
 
@@ -199,7 +205,7 @@ export class SalesRegisterComponent {
       this.showList = true;
     }, (error) => {
       console.log(error);
-      alert('Erro interno do sistema');
+      this.toastr.error('Erro interno do sistema', 'Erro!');
     });
   }
 
@@ -209,7 +215,7 @@ export class SalesRegisterComponent {
       this.showList = true;
     }, (error) => {
       console.log(error);
-      alert('Erro interno do sistema');
+      this.toastr.error('Erro interno do sistema', 'Erro!');
     });
   }
 
@@ -225,26 +231,26 @@ export class SalesRegisterComponent {
 
   FillComboValues() {
 
-    if (this.selectedClientValue){
+    if (this.selectedClientValue) {
       let selectedClientValue =  this.selectedClientValue.split(' - ');
       this.sale.IdCustomer = selectedClientValue[0];
       this.sale.Customer = selectedClientValue[1];
  
      }
  
-     if (this.selectedProductValue){
+     if (this.selectedProductValue) {
       let selectedProductValue = this.selectedProductValue.split(' - ');
       this.sale.IdProduct = selectedProductValue[0];
       this.sale.Product = selectedProductValue[1];
      }
  
-     if (this.selectedUserValue){
+     if (this.selectedUserValue) {
       let selectedUserValue = this.selectedUserValue.split(' - ');
       this.sale.IdUser =  selectedUserValue[0];
       this.sale.User =  selectedUserValue[1];
      }
 
-if  (this.selectedOperation){
+if  (this.selectedOperation) {
      this.sale.Operation =  this.selectedOperation;
   }
 

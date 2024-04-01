@@ -21,10 +21,10 @@
           <tbody>
             <tr *ngFor="let user of users">
               <th scope="row">
-                <!-- <button class="btn-primary" (click)="openDetails(user)">Editar</button>
-                <button class="btn-danger" (click)="delete(user)">Excluir</button> -->
+                <div style="display: flex;">
                 <button class="btn-primary" (click)="openDetails(user)"><i class="fa fa-pencil"></i></button>
                 <button class="btn-danger" (click)="delete(user)"><i class="fa fa-times"></i></button>
+                </div>
               </th>
               <td>{{user.id}}</td>
               <td>{{user.name}}</td>
@@ -50,11 +50,12 @@
         <input type="email" class="form-control" id="exampleInputEmail" placeholder="Email" [(ngModel)]="user.email"
           name="email">
       </div>
-      <div class="form-group spaced">
+       <div class="form-group spaced">
         <label for="exampleInputEmail">Senha:</label>
         <input type="password" class="form-control" id="exampleInputPassword" placeholder="Senha"
           [(ngModel)]="user.password" name="password">
-      </div>
+      </div> 
+
       <button type="submit" class="btn btn-primary" (click)="save()">Save</button>
     </form>
   </div>
@@ -66,8 +67,9 @@
         <input type="email" class="form-control" id="exampleInputEmail" placeholder="Email" [(ngModel)]="userLogin.email" name="email">
       </div>
       <div class="form-group spaced">
-        <label for="exampleInputEmail">Password:</label>
-        <input type="text" class="form-control" id="exampleInputPassword" placeholder="Password" [(ngModel)]="userLogin.password" name="password">
+        <label for="exampleInputPassword">Senha:</label>
+        <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="exampleInputPassword" placeholder="Senha"
+          [(ngModel)]="userLogin.password" name="password">
       </div>
       <button type="submit" class="btn btn-primary" (click)="authenticate()">Login</button>
     </form>

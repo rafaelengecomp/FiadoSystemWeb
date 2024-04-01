@@ -26,26 +26,26 @@
             [routerLinkActive]="['link-active']"
             [routerLinkActiveOptions]="{ exact: true }"
           >
-            <a class="nav-link text-dark" [routerLink]="['/sales']">Histórico</a>
+            <a class="nav-link text-dark bold-link" [routerLink]="['/sales']">Histórico</a>
           </li>
           
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/users']"
+            <a class="nav-link text-dark bold-link" [routerLink]="['/users']"
               >Usuários</a
             >
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/customers']"
+            <a class="nav-link text-dark bold-link" [routerLink]="['/customers']"
               >Clientes</a
             >
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/products']"
+            <a class="nav-link text-dark bold-link" [routerLink]="['/products']"
               >Produtos</a
             >
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <button class="btn btn-primary nav-link" [routerLink]="['/users']"  (click)="logoff()">Sair</button>
+            <button class="btn btn-primary nav-link bold-link" [routerLink]="['/users']"  (click)="logoff()">Sair</button>
           </li>
         </ul>
       </div>

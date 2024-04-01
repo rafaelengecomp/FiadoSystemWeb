@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../Shared/services/product.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-products',
@@ -21,7 +22,7 @@ export class ProductsComponent {
   errorMessage: string = '';
 
 
-  constructor(private productService: ProductService) { } 
+  constructor(private productService: ProductService, private toastr: ToastrService) { } 
 
   ngOnInit() {
     this.getUserData();
@@ -44,11 +45,13 @@ export class ProductsComponent {
   post() {
     this.productService.post(this.product).subscribe(data => {
       if (data) {
-        alert('Produto cadastrado com sucesso');
+        //alert('Produto cadastrado com sucesso');
+        this.toastr.success('Produto cadastrado', 'Sucesso!');
         this.get();
         this.product = {};
       } else {
-        alert('Erro ao cadastrar produto');
+        //alert('Erro ao cadastrar produto');
+        this.toastr.error('Erro ao cadastrar Produto', 'Erro!');
       }
     }, (error: HttpErrorResponse) => {
       console.error('Error status:', error.status);
@@ -61,11 +64,13 @@ export class ProductsComponent {
   put() {
     this.productService.put(this.product).subscribe(data => {
       if (data) {
-        alert('Produto atualizado com sucesso');
+       // alert('Produto atualizado com sucesso');
+        this.toastr.success('Produto atualizado', 'Sucesso!');
         this.get();
         this.product = {};
       } else {
-        alert('Erro ao atualizar produto');
+       // alert('Erro ao atualizar produto');
+        this.toastr.error('Erro ao atualizar Produto', 'Erro!');
       }
     }, (error: HttpErrorResponse) => {
       console.error('Error status:', error.status);
@@ -81,15 +86,18 @@ export class ProductsComponent {
     this.productService.delete(product.id).subscribe(data => {
       console.log(data);
         if (data) {
-          alert('Produto excluído com sucesso');
+          //alert('Produto excluído com sucesso');
+          this.toastr.success('Produto excluído', 'Sucesso!');
           this.get();
           this.product = {};
         } else {
-          alert('Erro ao excluir produto');
+         // alert('Erro ao excluir produto');
+          this.toastr.error('Erro ao excluir Produto', 'Erro!');
         }
       }, error => {
         console.log(error);
-        alert('erro interno do sistema');
+       // alert('erro interno do sistema');
+        this.toastr.error('erro interno do sistema', 'Erro!');
       })
     }
 

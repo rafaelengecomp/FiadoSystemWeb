@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/0b2688af-1718-47c1-941d-9bfa13bee45f/resourceGroups/FiadoSystem/providers/Microsoft.Web/sites/fiado-system-web",
+    "appService.deploySubpath": "dist\\fiado-system-web"
+}

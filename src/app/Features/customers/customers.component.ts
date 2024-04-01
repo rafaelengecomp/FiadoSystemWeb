@@ -3,6 +3,7 @@ import { CustomerService } from '../../Shared/services/customer.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-customers',
@@ -32,7 +33,7 @@ export class CustomersComponent {
     'SP - São Paulo', 'SE - Sergipe', 'TO - Tocantins'
 ]
 
-  constructor(private customerService: CustomerService) { } 
+  constructor(private customerService: CustomerService, private toastr: ToastrService) { } 
 
   ngOnInit() {
     this.CleanFields();
@@ -66,11 +67,13 @@ export class CustomersComponent {
 
     this.customerService.post(this.customer).subscribe(data => {
       if (data) {
-        alert('Cliente cadastrado com sucesso');
+        //alert('Cliente cadastrado com sucesso');
+        this.toastr.success('Cliente cadastrado', 'Sucesso!');
         this.get();
         this.customer = {};
       } else {
-        alert('Erro ao cadastrar Cliente');
+        //alert('Erro ao cadastrar Cliente');
+        this.toastr.error('Erro ao cadastrar Cliente', 'Erro!');
       }
     }, (error: HttpErrorResponse) => {
       console.error('Error status:', error.status);
@@ -86,11 +89,13 @@ export class CustomersComponent {
 
     this.customerService.put(this.customer).subscribe(data => {
       if (data) {
-        alert('Cliente atualizado com sucesso');
+       // alert('Cliente atualizado com sucesso');
+        this.toastr.success('Cliente atualizado', 'Sucesso!');
         this.get();
         this.customer = {};
       } else {
-        alert('Erro ao atualizar Cliente');
+        //alert('Erro ao atualizar Cliente');
+        this.toastr.error('Erro ao atualizar Cliente', 'Erro!');
       }
     }, (error: HttpErrorResponse) => {
       console.error('Error status:', error.status);
@@ -105,15 +110,18 @@ delete(customer: any){
   this.customerService.delete(customer.id).subscribe(data => {
     console.log(data);
       if (data) {
-        alert('Cliente excluído com sucesso');
+        //alert('Cliente excluído com sucesso');
+        this.toastr.success('Cliente excluído com sucesso', 'Sucesso!');
         this.get();
         this.customer = {};
       } else {
-        alert('Erro ao excluir Cliente');
+        //alert('Erro ao excluir Cliente');
+        this.toastr.error('Erro ao excluir Cliente', 'Erro!');
       }
     }, error => {
       console.log(error);
-      alert('erro interno do sistema');
+      //alert('erro interno do sistema');
+      this.toastr.error('erro interno do sistema', 'Erro!');
     })
   }
 
@@ -122,6 +130,8 @@ openDetails(customer: any) {
     this.customer = customer;
 
     this.customer.state = this.customer.state.substring(0, 2) +' - '+ this.getStateName(this.customer.state.substring(0, 2));
+    this.customer.birthDate = this.customer.birthDate
+
     console.log(this.customer);
   }
 

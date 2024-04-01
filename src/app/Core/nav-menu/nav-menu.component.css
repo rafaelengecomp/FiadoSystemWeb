@@ -20,3 +20,7 @@ a.navbar-brand {
   .custom-navbar {
     background-color: hsl(245, 36%, 80%);
   }
+
+  .bold-link {
+    font-weight: bold;
+  }

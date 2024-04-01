@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-list',
@@ -22,15 +23,16 @@ export class UserComponent {
   userId: any;
   errorMessage: string = '';
   isAuthenticated: boolean = false;
+  showPassword = false;
 
-  constructor(private userService: UserService, private router: Router) { } 
+  constructor(private userService: UserService, private router: Router, private toastr: ToastrService) { } 
 
   ngOnInit() {
-    this.getUserData();
+     this.getUserData();
 
-    if (this.isAuthenticated) {
-        this.get();
-      }
+     if (this.isAuthenticated) {
+         this.get();
+       }
   } 
 
   get() {
@@ -66,15 +68,13 @@ export class UserComponent {
   post() {
     this.userService.post(this.user).subscribe(data => {
       if (data) {
-        alert('Usuário cadastrado com sucesso');
+        this.toastr.success('Usuário cadastrado', 'Sucesso!');
         this.get();
         this.user = {};
       } else {
-        alert('Erro ao cadastrar usuário');
+        this.toastr.error('Erro ao cadastrar Usuário', 'Erro!');
       }
     },(error: HttpErrorResponse) => {
-      
-      
       console.error('Error status:', error.status);
       console.error('Error message:', error.error);
 
@@ -85,12 +85,11 @@ export class UserComponent {
   put() {
     this.userService.put(this.user).subscribe(data => {
       if (data) {
-        
-        alert('Usuário atualizado com sucesso');
+        this.toastr.success('Usuário atualizado', 'Sucesso!');
         this.get();
         this.user = {};
       } else {
-        alert('Erro ao atualizar usuário');
+        this.toastr.error('Erro ao atualizar Usuário', 'Erro!');
       }
     }, (error: HttpErrorResponse) => {
       console.error('Error status:', error.status);
@@ -105,15 +104,15 @@ delete(user: any){
   this.userService.delete(user.id).subscribe(data => {
     console.log(data);
       if (data) {
-        alert('Usuário excluído com sucesso');
+        this.toastr.success('Usuário excluído', 'Sucesso!');
         this.get();
         this.user = {};
       } else {
-        alert('Erro ao excluir usuário');
+        this.toastr.error('Erro ao excluir Usuário', 'Erro!');
       }
     }, error => {
       console.log(error);
-      alert('erro interno do sistema');
+      this.toastr.error('Erro ao excluir Usuário', 'Erro!');
     })
   }
 
@@ -121,16 +120,15 @@ delete(user: any){
     this.userService.authenticate(this.userLogin).subscribe((data:any) => {
       if (data.user) {
         localStorage.setItem('user_logged', JSON.stringify(data));
-        //this.get();
         this.getUserData();
 
         this.router.navigate(['/sales']);
       } else {
-        alert('User invalid.');
+        this.toastr.error('Usuário inválido', 'Erro!');
       }      
     }, error => {
       console.log(error);
-        alert('User invalid');
+        this.toastr.error('Usuário inválido', 'Erro!');
     })
   }
 
